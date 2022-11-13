@@ -6,7 +6,7 @@ const test = new TestController()
 
 const authRoutes = (router: Router): void => {
     router.get("/login", auth.execute.bind(AuthController));
-    router.get("/", auth.execute.bind(TestController));
+    router.get("/teste", test.execute.bind(TestController));
 }
 
 export { authRoutes }

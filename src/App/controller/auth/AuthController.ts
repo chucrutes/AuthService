@@ -4,6 +4,7 @@ const User = require('../../model/User')
 
 import { Request, Response } from "express"
 import { sign } from "jsonwebtoken"
+import { authToken, refreshToken } from "../../../config"
 
 interface User {
     email: String,
@@ -17,18 +18,16 @@ class AuthController {
 
         try {
 
-            const secret = process.env.TOKEN
             const { email, password } = req.body;
 
 
-            User.findOne({ email: email }, '_id role fullName password', function (err: any, user: User) {
+            User.findOne({ email: email }, '_id role name fullName password', function (err: any, user: User) {
                 var validRequest = true
-                var token: String
-
+                var token, refreshT: string
                 if (err) {
                     throw new Error("An Internal Error Has Ocurred")
                 }
-                
+
                 if (!user) {
                     validRequest = false
                 } else {
@@ -39,15 +38,29 @@ class AuthController {
 
                     token = sign(
                         {
-                            id: user._id,
-                            role: user.role
+                            user_id: user._id,
+                            user_role: user.role
                         },
-                        secret,
+                        authToken.secret, {
+                        expiresIn: authToken.expiresIn
+                    }
                     );
-                }
 
+                    refreshT = sign(
+                        {
+                            userId: user._id,
+                            userRole: user.role
+                        },
+                        authToken.secret, {
+                        expiresIn: refreshToken.expiresIn
+                    }
+                    )
+
+                }
+                
+                console.log(user)
                 if (validRequest) {
-                    res.status(200).send({ msg: "Logged In successfully", token })
+                    res.status(200).send({ msg: "Logged In successfully", token, refreshToken })
                 } else {
                     res.status(401).send("Invalid Credentials")
                 }

@@ -2,7 +2,7 @@ db.createCollection("users",
     {validator: {
         $jsonSchema: {
             bsonType: 'object',
-            required: ["fullName", "role", "password", "creationDate"],
+            required: ["fullName", "email", "role", "password", "creationDate"],
             properties: {
                 fullName: {
                     bsonType: "string",
@@ -11,11 +11,10 @@ db.createCollection("users",
                 email: {
                     bsonType: "string",
                     description: "Must be a string and is required",
-                    unique: true
                 },
                 role: {
-                    bsonType: "objectId",
-                    description: "Must be an int and is required"
+                    bsonType: "array",
+                    description: "User must have at least one role"
                 },
                 password: {
                     bsonType: "string",
