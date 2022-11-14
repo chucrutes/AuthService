@@ -22,48 +22,37 @@ class AuthController {
 
 
             User.findOne({ email: email }, '_id role name fullName password', function (err: any, user: User) {
-                var validRequest = true
-                var token, refreshT: string
+                var token: string, refreshT: string
+
                 if (err) {
                     throw new Error("An Internal Error Has Ocurred")
                 }
 
-                if (!user) {
-                    validRequest = false
-                } else {
-
-                    if (user.password != password) {
-                        validRequest = false
-                    }
-
-                    token = sign(
-                        {
-                            user_id: user._id,
-                            user_role: user.role
-                        },
-                        authToken.secret, {
-                        expiresIn: authToken.expiresIn
-                    }
-                    );
-
-                    refreshT = sign(
-                        {
-                            userId: user._id,
-                            userRole: user.role
-                        },
-                        authToken.secret, {
-                        expiresIn: refreshToken.expiresIn
-                    }
-                    )
-
+                if (!user || user.password != password) {
+                    return res.status(401).send("Invalid Credentials")
                 }
-                
-                console.log(user)
-                if (validRequest) {
-                    res.status(200).send({ msg: "Logged In successfully", token, refreshToken })
-                } else {
-                    res.status(401).send("Invalid Credentials")
+
+                token = sign(
+                    {
+                        user_id: user._id,
+                        user_role: user.role
+                    },
+                    authToken.secret, {
+                    expiresIn: authToken.expiresIn
                 }
+                );
+
+                refreshT = sign(
+                    {
+                        userId: user._id,
+                        userRole: user.role
+                    },
+                    authToken.secret, {
+                    expiresIn: refreshToken.expiresIn
+                }
+                )
+                return res.status(200).send({ msg: "Logged In successfully", token, refreshToken })
+
             });
 
 
