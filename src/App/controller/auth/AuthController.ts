@@ -18,7 +18,7 @@ class AuthController {
 
         try {
 
-            const { email, password } = req.body;
+            const { email, password } = req.body
 
 
             User.findOne({ email: email }, '_id role name fullName password', function (err: any, user: User) {
@@ -40,7 +40,7 @@ class AuthController {
                     authToken.secret, {
                     expiresIn: authToken.expiresIn
                 }
-                );
+                )
 
                 refreshT = sign(
                     {
@@ -53,7 +53,7 @@ class AuthController {
                 )
                 return res.status(200).send({ msg: "Logged In successfully", token, refreshToken })
 
-            });
+            })
 
 
         } catch (error) {
