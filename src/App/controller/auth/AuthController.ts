@@ -47,7 +47,7 @@ class AuthController {
                         userId: user._id,
                         userRole: user.role
                     },
-                    authToken.secret, {
+                    refreshToken.secret, {
                     expiresIn: refreshToken.expiresIn
                 }
                 )
